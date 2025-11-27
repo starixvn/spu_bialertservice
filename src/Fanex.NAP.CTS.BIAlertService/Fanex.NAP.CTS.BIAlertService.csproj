@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<CodeAnalysisRuleSet>..\..\.sonarlint\fanex.nap.spu.dcscsharp.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="Features\ArchiveAssociationCustomer\**" />
+		<Compile Remove="Features\ArchiveData\ArchivedCustomerMissing\Entities\**" />
+		<Compile Remove="Features\JobMonitoring\ScanMonitoring\LoginTransactionMonitoring\Entities\**" />
+		<EmbeddedResource Remove="Features\ArchiveAssociationCustomer\**" />
+		<EmbeddedResource Remove="Features\ArchiveData\ArchivedCustomerMissing\Entities\**" />
+		<EmbeddedResource Remove="Features\JobMonitoring\ScanMonitoring\LoginTransactionMonitoring\Entities\**" />
+		<None Remove="Features\ArchiveAssociationCustomer\**" />
+		<None Remove="Features\ArchiveData\ArchivedCustomerMissing\Entities\**" />
+		<None Remove="Features\JobMonitoring\ScanMonitoring\LoginTransactionMonitoring\Entities\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<AdditionalFiles Include="..\..\.sonarlint\fanex.nap.spu.dcs\CSharp\SonarLint.xml" Link="SonarLint.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Fanex.Data" Version="4.3.4" />
+		<PackageReference Include="Fanex.Data.MySql" Version="4.3.4" />
+		<PackageReference Include="Fanex.Data.Repository" Version="4.3.4" />
+		<PackageReference Include="Fanex.Data.SqlServer" Version="4.3.4" />
+		<PackageReference Include="Fanex.Logging.Extensions.Database" Version="2.0.2.1" />
+		<PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="2.0.2" />
+		<PackageReference Include="Fanex.NAP.Client.AspNetCore" Version="1.0.0.7" />
+		<PackageReference Include="Fanex.NAP.SPU.AspNetCore.Notification" Version="1.0.10" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="System.Net.Http" Version="4.3.4" />
+		<PackageReference Include="UAParser" Version="3.1.47" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Features\HighLossAgents\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<SonarQubeSetting Include="sonar.coverage.exclusions">
+			<Value>**/Shares/**/**/*, **/Features/**/Entities/*, **/Features/**/Criteria/*, **/Features/**/Model/*, **/*DataAccess.cs, **/*Model.cs, **/*Criteria.cs</Value>
+		</SonarQubeSetting>
+	</ItemGroup>
+</Project>
+
