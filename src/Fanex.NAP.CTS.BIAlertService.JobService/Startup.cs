@@ -32,9 +32,7 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
             //services.AddSingleton<INapSettings>(new NapSettings(Configuration));
 
             services.AddControllers();
-            services
-               .AddHealthChecks();
-
+            services.AddHealthChecks();
 
             services.AddSwaggerGen(c =>
             {

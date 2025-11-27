@@ -1,11 +1,11 @@
-using Fanex.NAP.CTS.BIAlertService.Shares;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using System;
-
 namespace Fanex.NAP.CTS.BIAlertService.JobService
 {
+    using Fanex.NAP.CTS.Core.Extentions;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.Hosting;
+    using System;
+
     public static class Program
     {
         public static void Main(string[] args)

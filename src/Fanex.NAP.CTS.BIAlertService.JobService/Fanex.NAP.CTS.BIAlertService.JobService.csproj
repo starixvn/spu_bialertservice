@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fanex.NAP.CTS.BIAlertService\Fanex.NAP.CTS.BIAlertService.csproj" />
+    <ProjectReference Include="..\Fanex.NAP.CTS.Core\Fanex.NAP.CTS.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

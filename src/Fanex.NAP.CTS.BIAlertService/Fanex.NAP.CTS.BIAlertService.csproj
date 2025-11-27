@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -18,10 +18,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<AdditionalFiles Include="..\..\.sonarlint\fanex.nap.spu.dcs\CSharp\SonarLint.xml" Link="SonarLint.xml" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="Fanex.Data" Version="4.3.4" />
 		<PackageReference Include="Fanex.Data.MySql" Version="4.3.4" />
 		<PackageReference Include="Fanex.Data.Repository" Version="4.3.4" />
@@ -36,7 +32,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Features\HighLossAgents\" />
+	  <ProjectReference Include="..\Fanex.NAP.CTS.Core\Fanex.NAP.CTS.Core.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

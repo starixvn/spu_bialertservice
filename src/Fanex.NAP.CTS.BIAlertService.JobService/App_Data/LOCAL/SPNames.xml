@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<StoredProcedures>
-  <!-- Add your stored procedure names here -->
-</StoredProcedures>
+
+<Functions>
+  <Function Name="HighLossAgent">    
+    <Setting Key="CTS_HighLossAgent_SP1" SpName="CTS_HighLossAgent_SP1" DbName="DBVR2.bodb_VR2Model.wsv_cts" TimeOut="300" />
+    <Setting Key="CTS_HighLossAgent_SP2" SpName="CTS_HighLossAgent_SP2" DbName="DBVR2.bodb_VR2Model.wsv_cts" TimeOut="300" />
+  </Function>
+</Functions>
 

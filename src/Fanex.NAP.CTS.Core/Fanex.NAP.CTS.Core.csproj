@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<SonarQubeExclude>True</SonarQubeExclude>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\tony.nguyen\.nuget\packages\fanex.mailstation\2.1.2\contentFiles\any\net8.0\app.config.transform" />
+    <Content Remove="C:\Users\tony.nguyen\.nuget\packages\fanex.mailstation\2.1.2\contentFiles\any\net8.0\appsettings.json" />
+    <Content Remove="C:\Users\tony.nguyen\.nuget\packages\fanex.mailstation\2.1.2\contentFiles\any\net8.0\web.config.transform" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="8.0.5" />
+    <PackageReference Include="Fanex.Data" Version="4.3.4" />
+    <PackageReference Include="Fanex.Data.MySql" Version="4.3.4" />
+    <PackageReference Include="Fanex.Data.Repository" Version="4.3.4" />
+    <PackageReference Include="Fanex.Data.SqlServer" Version="4.3.4" />
+    <PackageReference Include="Fanex.Logging" Version="2.0.2" />
+    <PackageReference Include="Fanex.Logging.Extensions.Database" Version="2.0.2.1" />
+    <PackageReference Include="Fanex.Logging.Sentry.RavenClient" Version="2.0.2" />
+    <PackageReference Include="Fanex.RemotingRef" Version="1.5.5.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
+</Project>
