@@ -1,7 +1,6 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.Features.HighLossAgent
 {
     using Fanex.NAP.CTS.Core.Helpers.Api;
-    using System;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
@@ -11,7 +10,7 @@
 
         IEnumerable<HighLossAgentAlertEntity> GetAlertHighLossAgent(int days);
 
-        bool AlertViaRocketChat(HighLossAgentAlertModel highLossAgent);
+        Task<bool> AlertViaRocketChat(HighLossAgentAlertModel highLossAgent);
     }
 
     public class HighLossAgentService : IHighLossAgentService
