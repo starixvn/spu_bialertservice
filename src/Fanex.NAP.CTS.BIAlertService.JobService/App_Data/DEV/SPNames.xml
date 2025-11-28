@@ -6,3 +6,4 @@
     <Setting Key="CTS_HighLossAgent_SP2" SpName="CTS_HighLossAgent_SP2" DbName="DBVR2.bodb_VR2Model.wsv_cts" TimeOut="300" />
   </Function>
 </Functions>
+

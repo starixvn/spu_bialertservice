@@ -6,7 +6,7 @@
 
         public string DateRange { get; set; }
 
-        public int AffectAgents { get; set; }
+        public string AffectAgents { get; set; }
 
         public string Top5Agents { get; set; }
     }

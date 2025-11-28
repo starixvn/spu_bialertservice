@@ -1,6 +1,5 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.Features.HighLossAgent
 {
-    using Fanex.Data.Repository;
     using Fanex.NAP.CTS.Core.Service;
     using System.Collections.Generic;
     using System.Linq;

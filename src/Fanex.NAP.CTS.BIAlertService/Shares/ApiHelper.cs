@@ -1,33 +1,179 @@
 namespace Fanex.NAP.CTS.BIAlertService.Shares
 {
     using Fanex.NAP.CTS.BIAlertService.Shares.Models;
+    using Newtonsoft.Json;
     using System;
     using System.Net;
     using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Net.Http.Json;
+    using System.Text;
+    using System.Threading.Tasks;
 
     public static class ApiHelper
     {
         private static APIHelperConfig _config;
-
         public static void Setup(APIHelperConfig config)
         {
             _config = config;
         }
 
-        public static HttpClient CreateHttpClient()
+        [Obsolete("Too many generic and parameter")]
+        public static async Task<TResult> Post<TParam, TResult>(string url, TParam param, int environment, int mailingListId)
         {
-            var handler = new HttpClientHandler();
-
-            if (!string.IsNullOrEmpty(_config?.Proxy))
+            using (var web = new HttpClient())
             {
-                handler.Proxy = new WebProxy(_config.Proxy);
-                handler.UseProxy = true;
+                var response = await web.PostAsJsonAsync(url, param).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return default(TResult);
+                }
+
+                return await response.Content.ReadFromJsonAsync<TResult>().ConfigureAwait(false);
             }
+        }
 
-            return new HttpClient(handler)
+        public static async Task<TResult> Post<TResult>(string url, object param, double timeOutbySeconds = 120)
+        {
+            using (var web = new HttpClient())
             {
-                Timeout = TimeSpan.FromMinutes(5)
+                var content = JsonConvert.SerializeObject(param);
+
+                var buffer = Encoding.UTF8.GetBytes(content);
+
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                web.Timeout = TimeSpan.FromSeconds(timeOutbySeconds);
+
+                var response = await web.PostAsync(url, byteContent).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
+
+                var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                return JsonConvert.DeserializeObject<TResult>(result);
+            }
+        }
+
+        public static async Task<APIHelperModel<TResult>> PostWithResponseHttpCode<TResult>(string url, object param, double timeOutbySeconds = 120)
+        {
+            using (var web = new HttpClient())
+            {
+                var content = JsonConvert.SerializeObject(param);
+
+                var buffer = Encoding.UTF8.GetBytes(content);
+
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                web.Timeout = TimeSpan.FromSeconds(timeOutbySeconds);
+
+                var response = await web.PostAsync(url, byteContent).ConfigureAwait(false);
+
+                string responseString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                return new APIHelperModel<TResult>
+                {
+                    Data = response.IsSuccessStatusCode ? JsonConvert.DeserializeObject<TResult>(responseString) : default,
+                    StatusCode = (int)response.StatusCode,
+                    IsSuccess = response.IsSuccessStatusCode,
+                    Message = response.IsSuccessStatusCode ? string.Empty : responseString
+                };
+            }
+        }
+
+        public static async Task<APIHelperModel> PostWithResponseHttpCode(string url, object param, double timeOutbySeconds = 120)
+        {
+            using (var web = new HttpClient())
+            {
+                var content = JsonConvert.SerializeObject(param);
+
+                var buffer = Encoding.UTF8.GetBytes(content);
+
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                web.Timeout = TimeSpan.FromSeconds(timeOutbySeconds);
+
+                var response = await web.PostAsync(url, byteContent).ConfigureAwait(false);
+
+                string responseString = response.IsSuccessStatusCode ? string.Empty : await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                return new APIHelperModel
+                {
+                    StatusCode = (int)response.StatusCode,
+                    IsSuccess = response.IsSuccessStatusCode,
+                    Message = responseString
+                };
+            }
+        }
+
+        public static async Task<TResult> PostWithProxy<TResult>(string url, object param)
+        {
+            var proxy = new WebProxy
+            {
+                Address = new Uri(_config?.Proxy)
             };
+
+            var httpClientHandler = new HttpClientHandler
+            {
+                Proxy = proxy,
+            };
+
+            using (var web = new HttpClient(handler: httpClientHandler, disposeHandler: true))
+            {
+                var content = JsonConvert.SerializeObject(param);
+
+                var buffer = Encoding.UTF8.GetBytes(content);
+
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await web.PostAsync(url, byteContent).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
+
+                var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                return JsonConvert.DeserializeObject<TResult>(result);
+            }
+        }
+
+        public static async Task Post(string url, object param)
+        {
+            using (var web = new HttpClient())
+            {
+                await web.PostAsJsonAsync(url, param).ConfigureAwait(false);
+            }
+        }
+
+        public static async Task<TResult> Get<TResult>(string url)
+        {
+            using (var web = new HttpClient())
+            {
+                var response = await web.GetAsync(url).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
+
+                var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                return JsonConvert.DeserializeObject<TResult>(result);
+            }
         }
     }
 }

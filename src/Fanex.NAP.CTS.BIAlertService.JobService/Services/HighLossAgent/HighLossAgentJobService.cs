@@ -29,7 +29,7 @@
                 {
                     _highLossAgentService.GetAlertHighLossAgent(days);
 
-
+                    _highLossAgentService.AlertViaRocketChat(GetAlertViaRocketChat_DataTest());
                 }
             }
             catch (Exception ex)
@@ -40,6 +40,17 @@
             }
 
             return Task.FromResult(true);
+        }
+
+        private HighLossAgentAlertModel GetAlertViaRocketChat_DataTest() 
+        {
+            return new HighLossAgentAlertModel
+            {
+                 Title = "High-loss Agents in 3 days - <Alert Timestamp>",
+                 DateRange = "Data Range: 11/15/2025 - 11/17/2025",
+                 AffectAgents = "Affected Agents: Total 77",
+                 Top5Agents = "Agent1, Agent2, Agent3, Agent4, Agent5"
+            };
         }
     }
 }
