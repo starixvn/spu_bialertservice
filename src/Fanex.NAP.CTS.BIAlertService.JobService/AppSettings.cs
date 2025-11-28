@@ -20,8 +20,6 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         string SentryCategory { get; }
 
         APIHelperConfig APIHelperConfig { get; }
-
-        NotificationChannelsConfig NotificationChannelConfig { get; }
     }
 
     public class AppSettings : IAppSettings
@@ -34,7 +32,6 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         private readonly string sentryDsn;
         private readonly string sentryCategory;
         private readonly APIHelperConfig apiHelperConfig;
-        private readonly NotificationChannelsConfig notificationChannelsConfig;
 
         public AppSettings(IConfiguration configuration)
         {
@@ -48,10 +45,6 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
             apiHelperConfig = new APIHelperConfig
             {
                 Proxy = GetValue<string>("APIHelperConfig:Proxy")
-            };
-            notificationChannelsConfig = new NotificationChannelsConfig
-            {
-                DBAMonitoringGroupChannelId = GetValue<string>("NotificationChannel:DBAMonitoringGroupChannelId")
             };
         }
 
@@ -86,8 +79,6 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         public string SentryCategory => sentryCategory;
 
         public APIHelperConfig APIHelperConfig => apiHelperConfig;
-
-        public NotificationChannelsConfig NotificationChannelConfig => notificationChannelsConfig;
         #endregion Variables
 
         #region Methods

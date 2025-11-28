@@ -2,6 +2,8 @@ FROM hub.nexdev.net/base/dotnet/core/sdk:8.0-alpine-25h2 AS builder
 
 WORKDIR /src
 
+COPY ["./src/Fanex.NAP.CTS.Core", "Fanex.NAP.CTS.Core/"]
+
 COPY ["./src/Fanex.NAP.CTS.BIAlertService", "Fanex.NAP.CTS.BIAlertService/"]
 
 COPY ["./src/Fanex.NAP.CTS.BIAlertService.JobService/Fanex.NAP.CTS.BIAlertService.JobService.csproj", "Fanex.NAP.CTS.BIAlertService.JobService/"]
