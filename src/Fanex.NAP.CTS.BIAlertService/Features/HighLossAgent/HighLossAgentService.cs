@@ -1,16 +1,13 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.Features.HighLossAgent
 {
-    using Fanex.NAP.CTS.Core.Helpers.Api;
-    using System.Collections.Generic;
-    using System.Threading.Tasks;
+    using Fanex.NAP.CTS.BIAlertService.Shares;
+    using System;
 
     public interface IHighLossAgentService
     {
-        bool IsReadyAlertHighLossAgent(int days);
+        bool IsReadyAlertHighLossAgent(RuleHighLossAgent rule, DateTime checkDate);
 
-        IEnumerable<HighLossAgentAlertEntity> GetAlertHighLossAgent(int days);
-
-        Task<bool> AlertViaRocketChat(HighLossAgentAlertModel highLossAgent);
+        HighLossAgentAlertModel GetAlertHighLossAgent(RuleHighLossAgent rule, DateTime captureDate, int batchSize);     
     }
 
     public class HighLossAgentService : IHighLossAgentService
@@ -22,23 +19,14 @@
             _dataAccess = dataAccess;
         }
 
-        public bool IsReadyAlertHighLossAgent(int days)
+        public bool IsReadyAlertHighLossAgent(RuleHighLossAgent rule, DateTime checkDate)
         {
-            return _dataAccess.IsReadyAlertHighLossAgent(days);
+            return _dataAccess.IsReadyAlertHighLossAgent(rule, checkDate);
         }
 
-        public IEnumerable<HighLossAgentAlertEntity> GetAlertHighLossAgent(int days)
+        public HighLossAgentAlertModel GetAlertHighLossAgent(RuleHighLossAgent rule, DateTime captureDate, int batchSize)
         {
-            return _dataAccess.GetAlertHighLossAgent(days);
-        }
-
-        public async Task<bool> AlertViaRocketChat(HighLossAgentAlertModel highLossAgent)
-        {
-            var url = "";
-
-            await ApiHelper.Post<string>(url, highLossAgent, 300);
-
-            return false;
-        }
+            return _dataAccess.GetAlertHighLossAgent(rule, captureDate, batchSize);
+        }       
     }
 }

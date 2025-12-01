@@ -1,9 +1,10 @@
 namespace Fanex.NAP.CTS.BIAlertService.JobService
 {
+    using Fanex.NAP.CTS.BIAlertService.Features.RocketChat;
     using Fanex.NAP.CTS.BIAlertService.Shares.Models;
     using Microsoft.Extensions.Configuration;
     using System;
-    using System.ComponentModel;
+    using System.ComponentModel;    
 
     public interface IAppSettings
     {
@@ -20,6 +21,8 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         string SentryCategory { get; }
 
         APIHelperConfig APIHelperConfig { get; }
+
+        RCConfigModel RocketChat { get; }
     }
 
     public class AppSettings : IAppSettings
@@ -32,6 +35,7 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         private readonly string sentryDsn;
         private readonly string sentryCategory;
         private readonly APIHelperConfig apiHelperConfig;
+        private readonly RCConfigModel rocketChatConfig;
 
         public AppSettings(IConfiguration configuration)
         {
@@ -46,6 +50,7 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
             {
                 Proxy = GetValue<string>("APIHelperConfig:Proxy")
             };
+            rocketChatConfig = GetSection<RCConfigModel>("RocketChat");
         }
 
         #region Variables
@@ -79,6 +84,8 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         public string SentryCategory => sentryCategory;
 
         public APIHelperConfig APIHelperConfig => apiHelperConfig;
+
+        public RCConfigModel RocketChat => rocketChatConfig;
         #endregion Variables
 
         #region Methods

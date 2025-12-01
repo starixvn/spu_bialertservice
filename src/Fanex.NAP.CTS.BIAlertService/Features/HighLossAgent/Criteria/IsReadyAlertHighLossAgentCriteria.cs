@@ -1,16 +1,20 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.Features.HighLossAgent
 {
     using Fanex.Data;
-    using Fanex.Data.Repository;   
+    using Fanex.Data.Repository;
+    using System;
 
     public class IsReadyAlertHighLossAgentCriteria : NonQueryCommand
     {
-        [SpParam(SqlParamName = "ip_ParamID")]
-        public int ParamID { get; set; }
+        [SpParam(SqlParamName = "RuleID")]
+        public int RuleID { get; set; }
+
+        [SpParam(SqlParamName = "CheckDate")]
+        public DateTime CheckDate { get; set; }
 
         public override string GetSettingKey()
         {
-            return "CTS_HighLossAgent_SP1";
+            return "CTS_BIAlert_GetRuleIDStatus";
         }
 
         public override bool IsValid()

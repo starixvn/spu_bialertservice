@@ -1,6 +1,7 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.JobService.Controllers
 {
     using Fanex.NAP.CTS.BIAlertService.JobService.Services.HighLossAgent;
+    using Fanex.NAP.CTS.BIAlertService.Shares;
     using Microsoft.AspNetCore.Mvc;
     using System.Threading.Tasks;
 
@@ -15,10 +16,16 @@
             _highLossAgentJobService = highLossAgentJobService;
         }
 
-        [HttpPost("DailyAlertHighLossAgent")]
-        public async Task<bool> DailyAlertHighLossAgent([FromForm] int days)
+        [HttpPost("DailyAlertHighLossAgent3Days")]
+        public async Task<bool> DailyAlertHighLossAgent3Days([FromForm] int daysAgo)
         {
-            return await _highLossAgentJobService.Execute(days);
+            return await _highLossAgentJobService.Execute(RuleHighLossAgent.RuleID_HighLossAgent3Days, daysAgo, nameof(DailyAlertHighLossAgent3Days));
+        }
+
+        [HttpPost("DailyAlertHighLossAgent7Days")]
+        public async Task<bool> DailyAlertHighLossAgent7Days([FromForm] int daysAgo)
+        {
+            return await _highLossAgentJobService.Execute(RuleHighLossAgent.RuleID_HighLossAgent7Days, daysAgo, nameof(DailyAlertHighLossAgent7Days));
         }
 
     }

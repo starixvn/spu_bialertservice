@@ -1,14 +1,15 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.Features.HighLossAgent
 {
+    using Fanex.NAP.CTS.BIAlertService.Shares;
     using Fanex.NAP.CTS.Core.Service;
-    using System.Collections.Generic;
+    using System;
     using System.Linq;
 
     public interface IHighLossAgentDataAccess
     {
-        bool IsReadyAlertHighLossAgent(int days);
+        bool IsReadyAlertHighLossAgent(RuleHighLossAgent rule, DateTime checkDate);
 
-        IEnumerable<HighLossAgentAlertEntity> GetAlertHighLossAgent(int days);
+        HighLossAgentAlertModel GetAlertHighLossAgent(RuleHighLossAgent rule, DateTime captureDate, int batchSize);
     }
 
     public class HighLossAgentDataAccess : IHighLossAgentDataAccess
@@ -20,20 +21,37 @@
             _repository = repository;
         }
 
-        public bool IsReadyAlertHighLossAgent(int days)
+        public bool IsReadyAlertHighLossAgent(RuleHighLossAgent rule, DateTime checkDate)
         {
-            var criteria = new IsReadyAlertHighLossAgentCriteria { ParamID = days };
+            var criteria = new IsReadyAlertHighLossAgentCriteria 
+            {  
+                RuleID = (int)rule, 
+                CheckDate = checkDate
+            };
 
             var result = _repository.Fetch<bool>(criteria);
 
             return result?.Any(x => x) == true;
         }
 
-        public IEnumerable<HighLossAgentAlertEntity> GetAlertHighLossAgent(int days)
+        public HighLossAgentAlertModel GetAlertHighLossAgent(RuleHighLossAgent rule, DateTime captureDate, int batchSize)
         {
-            var criteria = new GetHighLossAgentCriteria { Days = days };
-            
-            return _repository.Fetch<HighLossAgentAlertEntity>(criteria);
+            var criteria = new GetHighLossAgentCriteria 
+            {  
+                RuleID = (int)rule, 
+                CaptureDate = captureDate, 
+                BatchSize = batchSize 
+            };
+
+            var topCust = _repository.Fetch<HighLossAgentTopCustEntity>(criteria);
+
+            return new HighLossAgentAlertModel
+            {
+                 TopCust = topCust,
+                 FromDate = criteria.FromDate,
+                 ToDate = criteria.ToDate,
+                 TotalCust = criteria.TotalCust
+            };
         }
     }
 }

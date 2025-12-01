@@ -39,11 +39,9 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fanex.NAP.CTS.BIAlertService.JobService", Version = "v1" });
             });
 
-            services.RegisterService();
+            services.RegisterService(appSettings);
 
             FanexDataConfig(appSettings);
-
-            Shares.ApiHelper.Setup(appSettings.APIHelperConfig);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

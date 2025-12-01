@@ -2,12 +2,12 @@
 {
     using System.ComponentModel;
 
-    public enum BIAlertHighLoss
+    public enum RuleHighLossAgent
     {
-        [Description("HighLossAgent3Days")]
-        HighLossAgent3Days = 3,
-        [Description("HighLossAgent7Days")]
-        HighLossAgent7Days = 7
+        [Description("Rule ID High Loss Agent 3 Days")]
+        RuleID_HighLossAgent3Days = 1,
+        [Description("Rule ID High Loss Agent 7 Days")]
+        RuleID_HighLossAgent7Days = 2
     }
 
 }

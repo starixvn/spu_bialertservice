@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <Functions>
-  <Function Name="HighLossAgent">    
-    <Setting Key="CTS_HighLossAgent_SP1" SpName="CTS_HighLossAgent_SP1" DbName="DBVR2.bodb_VR2Model.wsv_cts" TimeOut="300" />
-    <Setting Key="CTS_HighLossAgent_SP2" SpName="CTS_HighLossAgent_SP2" DbName="DBVR2.bodb_VR2Model.wsv_cts" TimeOut="300" />
+  <Function Name="HighLossAgent">
+    <Setting Key="CTS_BIAlert_GetRuleIDStatus" SpName="CTS_BIAlert_GetRuleIDStatus_xpre" DbName="DBVR2.bodb_VR2Model.wsv_cts" TimeOut="300" />
+    <Setting Key="CTS_BIAlert_GetCustByRuleID" SpName="CTS_BIAlert_GetCustByRuleID_xpre" DbName="DBVR2.bodb_VR2Model.wsv_cts" TimeOut="300" />
   </Function>
 </Functions>
 

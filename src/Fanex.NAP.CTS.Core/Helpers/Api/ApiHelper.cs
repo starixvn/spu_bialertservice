@@ -11,6 +11,46 @@
 
     public static class ApiHelper
     {
+        public static async Task<TResult?> Post<TResult>(string url, 
+            object param,
+            IDictionary<string, string>? headers,
+            double timeOutbySeconds = 120)
+        {
+            using (var web = new HttpClient())
+            {
+                if (headers != null)
+                {
+                    web.DefaultRequestHeaders.Clear();
+                    foreach (var header in headers)
+                    {
+                        web.DefaultRequestHeaders.Add(header.Key, header.Value);
+                    }
+                    web.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                }                                              
+
+                var content = JsonConvert.SerializeObject(param);
+
+                var buffer = Encoding.UTF8.GetBytes(content);
+
+                var byteContent = new ByteArrayContent(buffer);
+
+                byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                web.Timeout = TimeSpan.FromSeconds(timeOutbySeconds);
+
+                var response = await web.PostAsync(url, byteContent).ConfigureAwait(false);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+                }
+
+                var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+                return string.IsNullOrEmpty(result) ? default : JsonConvert.DeserializeObject<TResult>(result);
+            }
+        }
+
         public static async Task<TResult?> Post<TResult>(string url, object param, double timeOutbySeconds = 120)
         {
             using (var web = new HttpClient())
