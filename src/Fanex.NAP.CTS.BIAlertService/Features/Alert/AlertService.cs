@@ -1,6 +1,7 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.Features.Alert
 {
     using Fanex.NAP.CTS.BIAlertService.Features.RocketChat;
+    using System;
     using System.Text;
     using System.Threading.Tasks;
 
@@ -15,7 +16,7 @@
 
         public AlertService(IRocketChatService rocketChat)
         {
-            _rocketChat = rocketChat;
+            _rocketChat = rocketChat ?? throw new ArgumentNullException(nameof(rocketChat));
         }
 
         public async Task NotifyAsync(StringBuilder sbContent, string channel)

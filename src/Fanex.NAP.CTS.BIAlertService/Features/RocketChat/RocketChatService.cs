@@ -25,7 +25,7 @@
 
         public RocketChatService(IOptions<RCConfigModel> options)
         {
-            _config = options.Value;
+            _config = options?.Value ?? throw new ArgumentNullException(nameof(options));
         }
 
         public async Task LoginAsync()

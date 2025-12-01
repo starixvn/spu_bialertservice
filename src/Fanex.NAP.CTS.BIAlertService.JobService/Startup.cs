@@ -28,8 +28,7 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
             var appSettings = new AppSettings(Configuration);
 
             services.AddFanexLogSentry(Configuration);
-            services.AddSingleton<IAppSettings>(appSettings);
-            //services.AddSingleton<INapSettings>(new NapSettings(Configuration));
+            services.AddSingleton<IAppSettings>(appSettings);            
 
             services.AddControllers();
             services.AddHealthChecks();
@@ -53,7 +52,7 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Fanex.NAP.CTS.BIAlertService.JobService v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "Fanex.NAP.CTS.BIAlertService.JobService v1"));
             app.UseRouting();
 
             app.UseHealthChecks("/healthz", new HealthCheckOptions
@@ -67,11 +66,7 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-            });
-
-            //NapClientManager
-            //    .UseConfig(app.ApplicationServices.GetService<INapSettings>())
-            //    .UseSession(app.ApplicationServices.GetService<INapSession>());
+            });           
         }
 
         private void FanexDataConfig(IAppSettings appSettings)
