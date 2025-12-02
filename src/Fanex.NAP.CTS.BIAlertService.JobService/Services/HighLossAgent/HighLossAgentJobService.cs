@@ -44,13 +44,15 @@
                     var highLossAlert = _highLossAgentService.GetAlertHighLossAgent(rule, gmtMinus4, _topAgent);
 
                     var intro = GetIntro(rule, gmtPlus7);
-                    
-                    var rcContent = BuildRCContent(highLossAlert, intro);
-                    _ = _alertService.NotifyRocketChatAsync(rcContent, _appSettings.RocketChat.Channel);
 
-                    var serviceIntro = highLossAlert.BuildSlackIntro(serviceName);
-                    var slackContent = BuildSlackContent(highLossAlert);
-                    _ = _alertService.NotifySlackAsync(slackContent, serviceIntro);
+                    var rcContent = BuildRCContent(highLossAlert, intro);
+                    await _alertService.NotifyRocketChatAsync(rcContent, _appSettings.RocketChat.Channel);
+
+                    NotifySlackContent(highLossAlert, serviceName);
+                }
+                else 
+                {
+                    NotifySlackNotReadyData(serviceName);
                 }
             }
             catch (Exception ex)
@@ -69,16 +71,17 @@
 
             while (countRetry <= retryTimesCheckDataReady)
             {
-                var isDataReady = _highLossAgentService.IsReadyAlertHighLossAgent(rule, checkDate);
-
-                if (isDataReady)
-                {
-                    return true; 
-                }
-
                 countRetry++;
 
-                Thread.Sleep(Consts.SLEEPTIME_HIGHLOSSAGENTCHECKDATAREADY);
+                if (_highLossAgentService.IsReadyAlertHighLossAgent(rule, checkDate))
+                {
+                    return true; 
+                }                                
+
+                if (countRetry <= retryTimesCheckDataReady)
+                {
+                    Thread.Sleep(Consts.SLEEPTIME_HIGHLOSSAGENTCHECKDATAREADY);
+                }                
             }
 
             return false;
@@ -107,6 +110,20 @@
 
             return sbContent;
         }
+
+        private void NotifySlackContent(HighLossAgentAlertModel highLossAlert, string serviceName)
+        {
+            var serviceIntro = highLossAlert.BuildSlackIntro(serviceName);
+            var slackContent = BuildSlackContent(highLossAlert);
+            _ = _alertService.NotifySlackAsync(slackContent, serviceIntro);
+        }
+
+        private void NotifySlackNotReadyData(string serviceName)
+        {           
+            var sbContent = new StringBuilder($"🆘 Checking data for {serviceName} DO NOT READY data");
+            _ = _alertService.NotifySlackAsync(sbContent, serviceName);
+        }
+      
 
         private string GetIntro(RuleHighLossAgent rule, DateTime gmtPlus7)
         {
