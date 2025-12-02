@@ -1,19 +1,17 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.JobService.Services.HighLossAgent
 {
     using Fanex.NAP.CTS.BIAlertService.Features.Alert;
-    using Fanex.NAP.CTS.BIAlertService.Features.HighLossAgent;
-    using Fanex.NAP.CTS.BIAlertService.Features.RocketChat;
+    using Fanex.NAP.CTS.BIAlertService.Features.HighLossAgent;  
     using Fanex.NAP.CTS.BIAlertService.Shares;
-    using Fanex.NAP.CTS.Core.Extentions;
-    using Newtonsoft.Json;
-    using System;
-    using System.IO.Pipes;
+    using Fanex.NAP.CTS.Core.Extentions;    
+    using System;   
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
 
     public interface IHighLossAgentJobService
     {
-        Task<bool> Execute(RuleHighLossAgent rule, int daysAgo, string serviceName);
+        Task<bool> Execute(RuleHighLossAgent rule, int daysAgo, int retryTimesCheckDataReady, string serviceName);
     }
 
     public class HighLossAgentJobService : IHighLossAgentJobService
@@ -32,22 +30,27 @@
             _appSettings = appSettings;
         }
 
-        public async Task<bool> Execute(RuleHighLossAgent rule, int daysAgo, string serviceName)
+        public async Task<bool> Execute(RuleHighLossAgent rule, int daysAgo, int retryTimesCheckDataReady, string serviceName)
         {
             try
             {
                 var gmtMinus4 = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(-4), DateTimeKind.Unspecified)
-                    .AddDays(-daysAgo);                
+                    .AddDays(-daysAgo);
 
-                if (_highLossAgentService.IsReadyAlertHighLossAgent(rule, gmtMinus4))
+                var gmtPlus7 = DateTime.SpecifyKind(DateTime.UtcNow.AddHours(7), DateTimeKind.Unspecified);
+
+                if (IsReadyAlertHighLossAgent(rule, gmtMinus4, retryTimesCheckDataReady))
                 {
                     var highLossAlert = _highLossAgentService.GetAlertHighLossAgent(rule, gmtMinus4, _topAgent);
 
-                    var intro = GetIntro(rule, gmtMinus4.AddHours(11));
+                    var intro = GetIntro(rule, gmtPlus7);
                     
-                    var content = BuildContent(highLossAlert, intro);
+                    var rcContent = BuildRCContent(highLossAlert, intro);
+                    _ = _alertService.NotifyRocketChatAsync(rcContent, _appSettings.RocketChat.Channel);
 
-                    _ = _alertService.NotifyAsync(content, _appSettings.RocketChat.Channel);
+                    var serviceIntro = highLossAlert.BuildSlackIntro(serviceName);
+                    var slackContent = BuildSlackContent(highLossAlert);
+                    _ = _alertService.NotifySlackAsync(slackContent, serviceIntro);
                 }
             }
             catch (Exception ex)
@@ -60,17 +63,47 @@
             return await Task.FromResult(true);
         }
 
-        private StringBuilder BuildContent(HighLossAgentAlertModel highLossAlert, string intro)
+        private bool IsReadyAlertHighLossAgent(RuleHighLossAgent rule, DateTime checkDate, int retryTimesCheckDataReady)
+        {
+            var countRetry = 0;
+
+            while (countRetry <= retryTimesCheckDataReady)
+            {
+                var isDataReady = _highLossAgentService.IsReadyAlertHighLossAgent(rule, checkDate);
+
+                if (isDataReady)
+                {
+                    return true; 
+                }
+
+                countRetry++;
+
+                Thread.Sleep(Consts.SLEEPTIME_HIGHLOSSAGENTCHECKDATAREADY);
+            }
+
+            return false;
+        }
+
+        private StringBuilder BuildRCContent(HighLossAgentAlertModel highLossAlert, string intro)
         {
             var contentBuilder = new StringBuilder();
 
             contentBuilder.AppendLine(intro);
 
-            var sbContent = highLossAlert.BuildContent(contentBuilder);
+            var sbContent = highLossAlert.BuildRCContent(contentBuilder);
 
-            var moreDetailUrl = string.Format($"{Constants.LINK_EMOJI} {Constants.MORE_DETAILS_REFER_POWERBIUrl}", _appSettings.RocketChat.PowerBIHighLossAgentUrl);
+            var moreDetailUrl = string.Format($"{Consts.LINK_EMOJI} {Consts.MORE_DETAILS_REFER_POWERBIUrl}", _appSettings.RocketChat.PowerBIHighLossAgentUrl);
 
             sbContent.AppendLine(moreDetailUrl);
+
+            return sbContent;
+        }
+
+        private StringBuilder BuildSlackContent(HighLossAgentAlertModel highLossAlert)
+        {
+            var contentBuilder = new StringBuilder();
+
+            var sbContent = highLossAlert.BuildSlackContent(contentBuilder);
 
             return sbContent;
         }
@@ -80,12 +113,12 @@
             switch (rule)
             {
                 case RuleHighLossAgent.RuleID_HighLossAgent3Days:
-                    return string.Format($"{Constants.FIRE_EMOJI} {Constants.HIGHLOSSAGENTS3DAYS_INTRO}", gmtPlus7.ToString(Constants.CONVERT_TO_DATETIME_MMddyyyyHHmmss));                   
+                    return string.Format($"{Consts.FIRE_EMOJI} {Consts.HIGHLOSSAGENTS3DAYS_INTRO}", gmtPlus7.ToString(Consts.CONVERT_TO_DATETIME_MMddyyyyHHmmss));                   
                 case RuleHighLossAgent.RuleID_HighLossAgent7Days:
-                    return string.Format($"{Constants.FIRE_EMOJI} {Constants.HIGHLOSSAGENTS7DAYS_INTRO}", gmtPlus7.ToString(Constants.CONVERT_TO_DATETIME_MMddyyyyHHmmss));                 
+                    return string.Format($"{Consts.FIRE_EMOJI} {Consts.HIGHLOSSAGENTS7DAYS_INTRO}", gmtPlus7.ToString(Consts.CONVERT_TO_DATETIME_MMddyyyyHHmmss));                 
                 default:
                     return string.Empty;
             }            
-        }        
+        }       
     }
 }

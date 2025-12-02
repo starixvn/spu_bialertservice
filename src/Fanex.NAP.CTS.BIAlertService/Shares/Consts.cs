@@ -1,6 +1,6 @@
 ﻿namespace Fanex.NAP.CTS.BIAlertService.Shares
 {
-    public static class Constants
+    public static class Consts
     {
         public const string CONVERT_TO_DATE_MMddyyyy = "MM/dd/yyyy";
         public const string CONVERT_TO_DATETIME_MMddyyyyHHmmss = "MM/dd/yyyy HH:mm:ss";
@@ -16,5 +16,6 @@
         public const string HIGHLOSSAGENTS3DAYS_INTRO = "High-loss Agents in 3 days - {0} (GMT + 7)";
         public const string HIGHLOSSAGENTS7DAYS_INTRO = "High-loss Agents in 7 days - {0} (GMT + 7)";
         public const string MORE_DETAILS_REFER_POWERBIUrl = "More details: Please refer to {0}";
+        public const int SLEEPTIME_HIGHLOSSAGENTCHECKDATAREADY = 120000;
     }
 }

@@ -5,12 +5,13 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService.Services
     using Fanex.NAP.Client.Services;
     using Fanex.NAP.CTS.BIAlertService.Features.Alert;
     using Fanex.NAP.CTS.BIAlertService.Features.HighLossAgent;
+    using Fanex.NAP.CTS.BIAlertService.Features.NotificationChannel;
     using Fanex.NAP.CTS.BIAlertService.Features.RocketChat;
     using Fanex.NAP.CTS.BIAlertService.JobService.Services.HighLossAgent;
+    using Fanex.NAP.CTS.Core.Notification;
     using Fanex.NAP.CTS.Core.Service;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.DependencyInjection;
-    using System.Configuration;
 
     public static class InitService
     {
@@ -20,7 +21,7 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService.Services
 
             RegisterRocketChatService(services, appSettings);
 
-            RegisterDailyHighLossAgent(services);
+            RegisterDailyHighLossAgent(services, appSettings);
         }
 
         private static void RegisterNAPService(IServiceCollection services)
@@ -47,11 +48,20 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService.Services
             services.AddSingleton<IRocketChatService, RocketChatService>();            
         }
 
-        public static void RegisterDailyHighLossAgent(IServiceCollection services)
-        {            
+        public static void RegisterDailyHighLossAgent(IServiceCollection services, IAppSettings appSettings)
+        {
             services.AddScoped<IHighLossAgentDataAccess, HighLossAgentDataAccess>();
             services.AddScoped<IHighLossAgentService, HighLossAgentService>();
             services.AddScoped<IHighLossAgentJobService, HighLossAgentJobService>();
+
+            services.AddSingleton<INotificationService, NotificationService>();
+            services.AddSingleton<INotificationChannel, RocketChatNotificationChannel>();
+            services.AddSingleton<INotificationChannel>(sp =>
+            {
+                var notificationService = sp.GetRequiredService<INotificationService>();                        
+                return new SlackNotificationChannel(notificationService, appSettings.LogGroupID, appSettings.EvironmentName);
+            });
+
             services.AddSingleton<IAlertService, AlertService>();
         }
     }

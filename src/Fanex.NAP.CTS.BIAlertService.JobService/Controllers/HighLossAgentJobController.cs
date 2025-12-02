@@ -17,15 +17,15 @@
         }
 
         [HttpPost("DailyAlertHighLossAgent3Days")]
-        public async Task<bool> DailyAlertHighLossAgent3Days([FromForm] int daysAgo)
+        public async Task<bool> DailyAlertHighLossAgent3Days([FromForm] int daysAgo, [FromForm] int retryTimesCheckDataReady)
         {
-            return await _highLossAgentJobService.Execute(RuleHighLossAgent.RuleID_HighLossAgent3Days, daysAgo, nameof(DailyAlertHighLossAgent3Days));
+            return await _highLossAgentJobService.Execute(RuleHighLossAgent.RuleID_HighLossAgent3Days, daysAgo, retryTimesCheckDataReady, nameof(DailyAlertHighLossAgent3Days));
         }
 
         [HttpPost("DailyAlertHighLossAgent7Days")]
-        public async Task<bool> DailyAlertHighLossAgent7Days([FromForm] int daysAgo)
+        public async Task<bool> DailyAlertHighLossAgent7Days([FromForm] int daysAgo, [FromForm] int retryTimesCheckDataReady)
         {
-            return await _highLossAgentJobService.Execute(RuleHighLossAgent.RuleID_HighLossAgent7Days, daysAgo, nameof(DailyAlertHighLossAgent7Days));
+            return await _highLossAgentJobService.Execute(RuleHighLossAgent.RuleID_HighLossAgent7Days, daysAgo, retryTimesCheckDataReady, nameof(DailyAlertHighLossAgent7Days));
         }
 
     }

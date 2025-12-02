@@ -23,6 +23,8 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         APIHelperConfig APIHelperConfig { get; }
 
         RCConfigModel RocketChat { get; }
+
+        string LogGroupID { get; }
     }
 
     public class AppSettings : IAppSettings
@@ -36,6 +38,7 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         private readonly string sentryCategory;
         private readonly APIHelperConfig apiHelperConfig;
         private readonly RCConfigModel rocketChatConfig;
+        private readonly string logGroupID;
 
         public AppSettings(IConfiguration configuration)
         {
@@ -51,6 +54,8 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
                 Proxy = GetValue<string>("APIHelperConfig:Proxy")
             };
             rocketChatConfig = GetSection<RCConfigModel>("RocketChat");
+
+            logGroupID = GetValue<string>(nameof(LogGroupID));
         }
 
         #region Variables
@@ -86,6 +91,8 @@ namespace Fanex.NAP.CTS.BIAlertService.JobService
         public APIHelperConfig APIHelperConfig => apiHelperConfig;
 
         public RCConfigModel RocketChat => rocketChatConfig;
+
+        public string LogGroupID => logGroupID;
         #endregion Variables
 
         #region Methods
