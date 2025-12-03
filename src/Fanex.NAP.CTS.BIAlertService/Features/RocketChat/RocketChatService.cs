@@ -1,4 +1,4 @@
-﻿namespace Fanex.NAP.CTS.BIAlertService.Features.RocketChat
+namespace Fanex.NAP.CTS.BIAlertService.Features.RocketChat
 {    
     using Fanex.NAP.CTS.Core.Extentions;
     using Fanex.NAP.CTS.Core.Helpers.Api;
@@ -60,17 +60,60 @@
         {
             await EnsureLoggedInAsync();
 
-            var postMessageUrl =
-                $"{_config.ApiBaseURL}{_config.Endpoint.PostMessage}";
+            var postMessageUrl = $"{_config.ApiBaseURL}{_config.Endpoint.PostMessage}";
 
-            return await ApiHelper.Post<bool>(
-                postMessageUrl,
+            try
+            {
+                var result = await PostMessageWithAuthAsync(postMessageUrl, content);
+
+                if (!result.success)
+                {
+                    _loginSession = null;
+
+                    await EnsureLoggedInAsync();
+
+                    result = await PostMessageWithAuthAsync(postMessageUrl, content);
+                }
+               
+                return result.success;
+            }
+            catch (Exception ex)
+            {
+                LogExtension.LogError($"RocketChat token expired or invalid, attempting re-login. Error: {ex.Message}");
+
+                _loginSession = null;
+
+                try
+                {
+                    await EnsureLoggedInAsync();
+
+                    var resultRetry = await PostMessageWithAuthAsync(postMessageUrl, content);
+
+                    return resultRetry.success;
+                }
+                catch (Exception loginEx)
+                {
+                    LogExtension.LogError($"RocketChat re-login or retry failed: {loginEx.Message}");
+
+                    throw new InvalidOperationException(
+                        $"RocketChat token expired and re-login/retry failed. Original error: {ex.Message}. Retry error: {loginEx.Message}",
+                        loginEx);
+                }
+
+                throw;
+            }
+        }
+
+        private async Task<RCResponsePostMessageModel> PostMessageWithAuthAsync(string url, RCPostMessageModel content)
+        {
+            return await ApiHelper.Post<RCResponsePostMessageModel>(
+                url,
                 content,
                 new Dictionary<string, string>{
                     { "X-Auth-Token", _loginSession!.data.authToken },
                     { "X-User-Id", _loginSession!.data.userId }
                 });
-        }
+        }      
 
         private async Task EnsureLoggedInAsync()
         {
