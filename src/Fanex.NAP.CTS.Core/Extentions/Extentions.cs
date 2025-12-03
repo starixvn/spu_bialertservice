@@ -12,6 +12,16 @@
             this IEnumerable<TValue> values,
             Int32 chunkSize)
         {
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+            
+            if (chunkSize <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(chunkSize));
+            }
+
             return values
                 .Select((v, i) => new { v, groupIndex = i / chunkSize })
                 .GroupBy(x => x.groupIndex)

@@ -1,6 +1,8 @@
 ﻿namespace Fanex.NAP.CTS.Core.Helpers
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Reflection;
     using System.Text.Json;
 
@@ -13,17 +15,25 @@
         public static T ConvertObject<T>(object source)
         {
             var target = Activator.CreateInstance<T>();
+            var sourceType = source.GetType();
+            var targetFields = target.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+          
+            foreach (var field in targetFields)
+            {               
+                var sourceProp = sourceType.GetProperty(field.Name, BindingFlags.Instance | BindingFlags.Public);
 
-            var fields = target.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                if (sourceProp == null)
+                {
+                    continue;
+                }                    
+                var value = sourceProp.GetValue(source);
 
-            foreach (var field in fields)
-            {
-                var value = field.GetValue(source);
                 if (field.CanWrite)
                 {
                     field.SetValue(target, value);
                 }
             }
+
             return target;
         }
 
