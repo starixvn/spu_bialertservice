@@ -79,7 +79,7 @@ namespace Fanex.NAP.CTS.BIAlertService.Features.RocketChat
             }
             catch (Exception ex)
             {
-                LogExtension.LogError($"RocketChat token expired or invalid, attempting re-login. Error: {ex.Message}");
+                LogExtension.LogError($"RocketChat token expired or invalid, attempting re-login. Error: {ex.Message}", ex);
 
                 _loginSession = null;
 
@@ -93,7 +93,7 @@ namespace Fanex.NAP.CTS.BIAlertService.Features.RocketChat
                 }
                 catch (Exception loginEx)
                 {
-                    LogExtension.LogError($"RocketChat re-login or retry failed: {loginEx.Message}");
+                    LogExtension.LogError($"RocketChat re-login or retry failed: {loginEx.Message}", loginEx);
 
                     throw new InvalidOperationException(
                         $"RocketChat token expired and re-login/retry failed. Original error: {ex.Message}. Retry error: {loginEx.Message}", loginEx);
